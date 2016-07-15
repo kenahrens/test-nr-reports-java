@@ -1,5 +1,7 @@
 .classpath
 .project
 .settings
+*.pdf
+
 config/application.conf
 target/
