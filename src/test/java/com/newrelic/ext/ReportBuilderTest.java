@@ -4,7 +4,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.typesafe.config.Config;
