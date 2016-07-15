@@ -4,6 +4,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.io.File;
+
 import org.json.JSONObject;
 
 import com.typesafe.config.Config;
@@ -28,7 +30,8 @@ public class ReportBuilderTest
         super( testName );
         
         // Load the configuration file
-        conf = ConfigFactory.load();
+        File file = new File("config/application.conf");
+        conf = ConfigFactory.parseFile(file);
     }
 
     /**
@@ -59,8 +62,8 @@ public class ReportBuilderTest
     	String nrql = "SELECT count(*) FROM Transaction";
     	
     	JSONObject response = Insights.runQuery(conf, nrql);
-    	int iCount = Insights.parseSimpleQuery(response, "count");
-		System.out.println("count = " + iCount);
+    	double dCount = Insights.parseSimpleResponse(response, "count");
+		System.out.println("count = " + dCount);
     }
     
     public void testAPIPercent()
@@ -69,7 +72,17 @@ public class ReportBuilderTest
     	String nrql = "SELECT percentage(count(*), WHERE result = 'SUCCESS') FROM SyntheticCheck";
     	
     	JSONObject response = Insights.runQuery(conf, nrql);
-    	int iCount = Insights.parseSimpleQuery(response, "result");
-		System.out.println("percentage = " + iCount);
+    	double dPercent = Insights.parseSimpleResponse(response, "result");
+		System.out.println("percentage = " + dPercent);
+    }
+    
+    public void testAPITimeseries()
+    {
+    	// NRQL query
+    	String nrql = "SELECT average(duration) FROM SyntheticCheck TIMESERIES";
+    	
+    	JSONObject response = Insights.runQuery(conf, nrql);
+    	double dAverage = Insights.parseTimeseriesResponse(response, "average");
+    	System.out.println("average = " + dAverage);
     }
 }

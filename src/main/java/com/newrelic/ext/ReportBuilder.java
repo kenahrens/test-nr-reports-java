@@ -1,5 +1,8 @@
 package com.newrelic.ext;
 
+import java.io.FileNotFoundException;
+
+import com.itextpdf.text.DocumentException;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
@@ -19,16 +22,29 @@ public class ReportBuilder
 	
 	public ReportBuilder() {
 		conf = ConfigFactory.load();
-		System.out.println("Configuration loaded");
 	}
 	
+	public void makeSyntheticReport() {
+		SyntheticsReport report = new SyntheticsReport(conf);
+        
+		try {
+			report.makeReport("MEAN Login and Test");
+		} catch (FileNotFoundException | DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+    public Config getConfig() {
+    	return conf;
+    }
+    
+
     public static void main( String[] args )
     {
         System.out.println( "Hello World!" );
         ReportBuilder builder = new ReportBuilder();
+        builder.makeSyntheticReport();
     }
     
-    public Config getConfig() {
-    	return conf;
-    }
 }

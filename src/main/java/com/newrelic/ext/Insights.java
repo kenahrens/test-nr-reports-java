@@ -40,10 +40,25 @@ public class Insights {
     	return null;
 	}
 	
-	public static int parseSimpleQuery(JSONObject response, String function) {
-		JSONArray results = response.getJSONArray("results");
-		JSONObject jCount = results.getJSONObject(0);
-		int iValue = jCount.getInt(function);
-		return iValue;
+	public static double parseSimpleResponse(JSONObject response, String function) {
+		JSONArray resultsArr = response.getJSONArray("results");
+		return resultsArr.getJSONObject(0).getDouble(function);
+	}
+	
+	public static void parseFacetResponse() {
+		// TODO
+	}
+	
+	/**
+	 * Timeseries response will have a few objects:
+	 * 
+	 * "total": { "results": [ { "FUNCTION": VALUE } ] }
+	 * "timeseries": [ { "results": [ { "FUNCTION": VALUE } ], "beginTimeSeconds": VALUE, "endTimeSeconds": VALUE, ...
+	 * "metadata": BLAH
+	 */
+	public static double parseTimeseriesResponse(JSONObject response, String function) {
+		JSONObject totalObj = response.getJSONObject("total");
+		JSONArray resultsArr = totalObj.getJSONArray("results");
+		return resultsArr.getJSONObject(0).getDouble(function);
 	}
 }
