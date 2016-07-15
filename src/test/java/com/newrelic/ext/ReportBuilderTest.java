@@ -53,13 +53,23 @@ public class ReportBuilderTest
     	assertNotNull(accountId);
     }
     
-    public void testAPI()
+    public void testAPICount()
     {
     	// NRQL query
     	String nrql = "SELECT count(*) FROM Transaction";
     	
     	JSONObject response = Insights.runQuery(conf, nrql);
     	int iCount = Insights.parseSimpleQuery(response, "count");
-		System.out.println("count=" + iCount);
+		System.out.println("count = " + iCount);
+    }
+    
+    public void testAPIPercent()
+    {
+    	// NRQL query
+    	String nrql = "SELECT percentage(count(*), WHERE result = 'SUCCESS') FROM SyntheticCheck";
+    	
+    	JSONObject response = Insights.runQuery(conf, nrql);
+    	int iCount = Insights.parseSimpleQuery(response, "result");
+		System.out.println("percentage = " + iCount);
     }
 }
