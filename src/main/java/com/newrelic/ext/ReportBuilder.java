@@ -1,5 +1,6 @@
 package com.newrelic.ext;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import com.itextpdf.text.DocumentException;
@@ -21,7 +22,10 @@ public class ReportBuilder
 	private Config conf;
 	
 	public ReportBuilder() {
-		conf = ConfigFactory.load();
+		// Load the configuration file
+        File file = new File("config/application.conf");
+        conf = ConfigFactory.parseFile(file);
+        System.out.println("Running report against account: " + conf.getString("newrelic.accountId"));
 	}
 	
 	public void makeSyntheticReport() {
@@ -33,6 +37,7 @@ public class ReportBuilder
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Make Report Complete");
 	}
 	
     public Config getConfig() {
@@ -42,7 +47,7 @@ public class ReportBuilder
 
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        System.out.println( "Starting Report Builder" );
         ReportBuilder builder = new ReportBuilder();
         builder.makeSyntheticReport();
     }
