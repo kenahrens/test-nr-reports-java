@@ -60,11 +60,7 @@ public class ReportBuilderTest
     	String nrql = "SELECT count(*) FROM Transaction";
     	
     	JSONObject response = Insights.runQuery(conf, nrql);
-		JSONArray results = response.getJSONArray("results");
-		JSONObject jCount = results.getJSONObject(0);
-		int iCount = jCount.getInt("count");
-
-		System.out.println("results=" + results);
+    	int iCount = Insights.parseSimpleQuery(response, "count");
 		System.out.println("count=" + iCount);
     }
 }
