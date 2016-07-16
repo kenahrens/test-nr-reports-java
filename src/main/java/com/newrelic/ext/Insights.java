@@ -16,7 +16,7 @@ public class Insights {
 		// Get the configuration items 
     	String accountId = conf.getString(ReportBuilder.ACCOUNT_ID);
     	String insightsQueryKey = conf.getString(ReportBuilder.INSIGHTS_QUERY_KEY);
-    	System.out.println("Running query: " + nrql);
+    	System.out.println(nrql);
     	
     	try {
     		HttpResponse<JsonNode> jsonResponse = Unirest.get(ReportBuilder.INSIGHTS_URL)
@@ -43,10 +43,6 @@ public class Insights {
 	public static double parseSimpleResponse(JSONObject response, String function) {
 		JSONArray resultsArr = response.getJSONArray("results");
 		return resultsArr.getJSONObject(0).getDouble(function);
-	}
-	
-	public static void parseFacetResponse() {
-		// TODO
 	}
 	
 	/**
