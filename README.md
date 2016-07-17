@@ -1,4 +1,5 @@
 # Test NR Reports Java
+[![Build Status](https://travis-ci.org/kenahrens/test-nr-reports-java.svg?branch=master)](https://travis-ci.org/kenahrens/test-nr-reports-java)
 Utility to generate PDF reports
 
 ## Pre-Requisites
