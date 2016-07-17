@@ -28,15 +28,7 @@ public class ReportBuilderTest
     public ReportBuilderTest( String testName )
     {
         super( testName );
-
-        // Load the configuration file if it exists
-        File file = new File("config/application.conf");
-        if (!file.exists()) {
-          // The default.conf will reference environment variables
-          file = new File("config" + File.separatorChar + "default.conf");
-        }
-        conf = ConfigFactory.parseFile(file);
-        conf = conf.resolve();
+        conf = ReportBuilder.loadConf();
     }
 
     /**
