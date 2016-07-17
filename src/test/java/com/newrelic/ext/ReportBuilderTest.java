@@ -14,12 +14,12 @@ import com.typesafe.config.ConfigFactory;
 /**
  * Unit test for simple App.
  */
-public class ReportBuilderTest 
+public class ReportBuilderTest
     extends TestCase
 {
-	
+
 	private Config conf;
-	
+
     /**
      * Create the test case
      *
@@ -28,10 +28,15 @@ public class ReportBuilderTest
     public ReportBuilderTest( String testName )
     {
         super( testName );
-        
-        // Load the configuration file
+
+        // Load the configuration file if it exists
         File file = new File("config/application.conf");
+        if (!file.exists()) {
+          // The default.conf will reference environment variables
+          file = new File("config" + File.separatorChar + "default.conf");
+        }
         conf = ConfigFactory.parseFile(file);
+        conf = conf.resolve();
     }
 
     /**
@@ -46,41 +51,41 @@ public class ReportBuilderTest
     {
         assertTrue( true );
     }
-    
+
     public void testConfigValue()
     {
-    	
+
     	String accountId = conf.getString(ReportBuilder.ACCOUNT_ID);
     	System.out.println("From config file: " + ReportBuilder.ACCOUNT_ID + "=" + accountId);
-    	
+
     	assertNotNull(accountId);
     }
-    
+
     public void testAPICount()
     {
     	// NRQL query
     	String nrql = "SELECT count(*) FROM Transaction";
-    	
+
     	JSONObject response = Insights.runQuery(conf, nrql);
     	double dCount = Insights.parseSimpleResponse(response, "count");
 		System.out.println("count = " + dCount);
     }
-    
+
     public void testAPIPercent()
     {
     	// NRQL query
     	String nrql = "SELECT percentage(count(*), WHERE result = 'SUCCESS') FROM SyntheticCheck";
-    	
+
     	JSONObject response = Insights.runQuery(conf, nrql);
     	double dPercent = Insights.parseSimpleResponse(response, "result");
 		System.out.println("percentage = " + dPercent);
     }
-    
+
     public void testAPITimeseries()
     {
     	// NRQL query
     	String nrql = "SELECT average(duration) FROM SyntheticCheck TIMESERIES";
-    	
+
     	JSONObject response = Insights.runQuery(conf, nrql);
     	double dAverage = Insights.parseTimeseriesResponse(response, "average");
     	System.out.println("average = " + dAverage);
