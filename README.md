@@ -2,14 +2,20 @@
 Utility to generate PDF reports
 
 ## Pre-Requisites
-Maven (dependencies should be in pom.xml)
-Java 1.7 or newer
+* Maven (dependencies should be in pom.xml)
+* Oracle Java 1.7
 
 ## Installation Instructions
 * Clone the repository
-* Copy config/default.conf to application.conf
-* Edit your application.conf and supply the correct API Key values
+* Either set environment variables (see below) or duplicate default.conf to make your own configuration
 * Run the tests ```mvn test```
+
+## Env Variables Configuration
+Set 4 environment variables to the correct values for your account (verify with [API Keys](https://rpm.newrelic.com/apikeys)))
+* NEWRELIC_ACCOUNT_ID - you will also see this in the URL bar
+* NEWRELIC_REST_API_KEY - overall REST Key (legacy)
+* NEWRELIC_ADMIN_API_KEY - specific Admin user API Key, used for certain API calls
+* NEWRELIC_INSIGHTS_QUERY_KEY - there are keys just for Insights in the Manage Data section
 
 ## Test Output
 When you run the tests it will build (and download dependencies), then you should see output like this.
@@ -35,4 +41,3 @@ Results :
 
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
 ```
-

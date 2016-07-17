@@ -1,7 +1,14 @@
+# Ignore eclipse files
 .classpath
 .project
 .settings
-*.pdf
 
-config/application.conf
+# Ignore user config files except the default
+config/*
+!config/default.conf
+
+# Don't need the build files
 target/
+
+# Don't upload result PDF files
+*.pdf
