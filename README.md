@@ -42,3 +42,23 @@ Results :
 
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
 ```
+
+## How To Execute
+You can use maven to execute the program and generate a PDF
+
+```
+$ mvn exec:java -DCONFIG_FILE=config/application.conf
+[INFO] Scanning for projects...
+(lots of output)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 7.456 s
+[INFO] Finished at: 2016-07-20T17:22:29-04:00
+[INFO] Final Memory: 19M/218M
+[INFO] ------------------------------------------------------------------------
+```
+
+And you should see a report called {nickname}.pdf with the results
+
+
