@@ -45,6 +45,17 @@ public class Insights {
 		return resultsArr.getJSONObject(0).getDouble(function);
 	}
 	
+	public static String[] parseUniquesResponse(JSONObject response) {
+		JSONArray resultsArr = response.getJSONArray("results");
+		JSONArray membersArr = resultsArr.getJSONObject(0).getJSONArray("members");
+		
+		String[] members = new String[membersArr.length()];
+		for(int i=0; i < membersArr.length(); i++) {
+			members[i] = membersArr.getString(i);
+		}
+		return members;
+	}
+	
 	/**
 	 * Timeseries response will have a few objects:
 	 * 

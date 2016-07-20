@@ -15,6 +15,7 @@ public class ReportBuilder
 {
 	public static final String ACCOUNT_ID = "newrelic.accountId";
 	public static final String INSIGHTS_QUERY_KEY = "newrelic.insightsQueryKey";
+	public static final String NICKNAME = "newrelic.nickname";
 
 	public static final String INSIGHTS_HEADER = "X-Query-Key";
 	public static final String INSIGHTS_URL = "https://insights-api.newrelic.com/v1/accounts/{accountId}/query";
@@ -23,8 +24,8 @@ public class ReportBuilder
 
 	public ReportBuilder() {
 		// Load the configuration file
-				conf = loadConf();
-        System.out.println("Running report against account: " + conf.getString("newrelic.accountId"));
+		conf = loadConf();
+        System.out.println("Configuration loaded for: " + conf.getString(NICKNAME));
 	}
 
 	public static Config loadConf() {
@@ -47,10 +48,12 @@ public class ReportBuilder
 
 	public void makeSyntheticReport() {
 		SyntheticsReport report = new SyntheticsReport(conf);
-
 		try {
-			report.makeReport("MEAN Login and Test");
-		} catch (FileNotFoundException | DocumentException e) {
+			report.makeReport();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DocumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -60,7 +63,6 @@ public class ReportBuilder
     public Config getConfig() {
     	return conf;
     }
-
 
     public static void main( String[] args )
     {
