@@ -68,4 +68,9 @@ public class Insights {
 		JSONArray resultsArr = totalObj.getJSONArray("results");
 		return resultsArr.getJSONObject(0).getDouble(function);
 	}
+	
+	public static String parseMeta(JSONObject response, String key) {
+		JSONObject meta = response.getJSONObject("metadata");
+		return meta.getString(key);
+	}
 }

@@ -5,12 +5,14 @@ import java.awt.geom.Rectangle2D;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,7 +35,10 @@ public class SyntheticsReport {
 	public static final String monitorList = "SELECT uniques(monitorName) FROM SyntheticCheck";
 	public static final String querySuccess = "SELECT percentage(count(*), WHERE result = 'SUCCESS') FROM SyntheticCheck"; 
 	public static final String queryFailed = "SELECT percentage(count(*), WHERE result != 'SUCCESS') FROM SyntheticCheck"; 
-	public static final String queryDuration = "SELECT average(duration) FROM SyntheticCheck TIMESERIES"; 
+	public static final String queryDuration = "SELECT average(duration) FROM SyntheticCheck TIMESERIES "; 
+	
+	private String since = "1 week ago";
+	private String until = "today";
 	
 	private Config conf;
 	private Document document;
@@ -56,11 +61,16 @@ public class SyntheticsReport {
 		writer = PdfWriter.getInstance(document, out);
 		document.open();
 		
+		// Get a list of all the Synthetic monitors
+		JSONObject rspMonitorList = Insights.runQuery(conf, addTimeToNrql(monitorList));
+		
 		// Report Title
 		addTitle(nickname + " Report");
+		String beginTime = Insights.parseMeta(rspMonitorList, "beginTime");
+		String endTime = Insights.parseMeta(rspMonitorList, "endTime");
+		addTitle("Time Range From " + beginTime + " to " + endTime);
 		
-		// Get a list of all Synthetic monitors
-		JSONObject rspMonitorList = Insights.runQuery(conf, addTimeToNrql(monitorList));
+		// Loop through the list of monitors
 		String[] monitors = Insights.parseUniquesResponse(rspMonitorList);
 		for(int i=0; i<monitors.length; i++) {
 			getMonitorData(monitors[i]);
@@ -159,23 +169,26 @@ public class SyntheticsReport {
 	}
 	
 	private JFreeChart getLineChart(String title, JSONObject responseDuration) {
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		TimeSeries ts = new TimeSeries(title);
+		TimeSeriesCollection dataset = new TimeSeriesCollection(ts);
 		
 		// Loop through the responseDuration JSON
 		JSONArray tsArr = responseDuration.getJSONArray("timeSeries");
+		System.out.println("Building TS data for " + title + " length = " + tsArr.length());
 		for (int i=0; i < tsArr.length(); i++) {
 			JSONObject tsObject = tsArr.getJSONObject(i);
 			JSONArray resultsArr = tsObject.getJSONArray("results");
 			double avg = resultsArr.getJSONObject(0).getDouble("average");
-			
-			dataset.addValue(avg, "default", i + "");
+			long end = tsObject.getLong("endTimeSeconds");
+			Date d = new Date(end * 1000);
+			ts.add(new Second(d), avg);
 		}
 		
-		String categoryAxisLabel = "";
-		String valueAxisLabel = "";
+		String valueAxisLabel = "Time (ms)";
+		String timeAxisLabel = null;
 		
-		return ChartFactory.createLineChart(title, categoryAxisLabel, valueAxisLabel, dataset,
-				PlotOrientation.VERTICAL, false, false, false);
+		return ChartFactory.createTimeSeriesChart(title, timeAxisLabel, valueAxisLabel, dataset,
+				false, false, false);
 	}
 	
 	private String getDecimal(double value) {
@@ -185,14 +198,15 @@ public class SyntheticsReport {
 	
 	private String addTimeToNrql(String nrql) {
 		String fullQuery = new String(nrql);
-		fullQuery += " SINCE 1 week ago";
+		fullQuery += " SINCE " + since;
+		fullQuery += " UNTIL " + until;
+		
 		return fullQuery;
 	}
 	
 	private String addToNrql(String nrql, String monitorName) {
-		String fullQuery = new String(nrql);
+		String fullQuery = new String(addTimeToNrql(nrql));
 		fullQuery += " WHERE monitorName = '" + monitorName + "'";
-		fullQuery += " SINCE 1 week ago";
 		return fullQuery;
 	}
 }
